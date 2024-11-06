@@ -32,7 +32,7 @@ pipeline {
                             ${SCANNER_HOME}/bin/sonar-scanner \
                                 -Dsonar.projectKey=todo \
                                 -Dsonar.sources=. \
-                                -Dsonar.host.url=http://192.168.1.69:9000 \
+                                -Dsonar.host.url=http://192.168.1.5:9000 \
                                 -Dsonar.token=sqp_04513c2ea71a49de2b8321de03a83d514702c4fd
                         """
                     }
