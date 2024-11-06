@@ -19,30 +19,30 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('sonar-server') {
-                        sh '${SCANNER_HOME}/bin/sonar-scanner --version'
-                        sh """
-                            ${SCANNER_HOME}/bin/sonar-scanner \
-                                -Dsonar.projectKey=todo \
-                                -Dsonar.sources=. \
-                                -Dsonar.host.url=http://192.168.1.5:9000 \
-                                -Dsonar.token=sqp_04513c2ea71a49de2b8321de03a83d514702c4fd
-                        """
-                    }
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         script {
+        //             withSonarQubeEnv('sonar-server') {
+        //                 sh '${SCANNER_HOME}/bin/sonar-scanner --version'
+        //                 sh """
+        //                     ${SCANNER_HOME}/bin/sonar-scanner \
+        //                         -Dsonar.projectKey=todo \
+        //                         -Dsonar.sources=. \
+        //                         -Dsonar.host.url=http://192.168.1.5:9000 \
+        //                         -Dsonar.token=sqp_04513c2ea71a49de2b8321de03a83d514702c4fd
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage("Quality gate"){
-          steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'jenkins' 
-                }
-            } 
-        }
+        // stage("Quality gate"){
+        //   steps {
+        //         script {
+        //             waitForQualityGate abortPipeline: false, credentialsId: 'jenkins' 
+        //         }
+        //     } 
+        // }
 
         // stage("Docker Build & Push"){
         //     steps{
@@ -56,13 +56,13 @@ pipeline {
         //     }
         // }
 
-        // stage('Build code with Docker Compose') {
-        //     steps {
-        //         script {
-        //             sh 'docker-compose up --build -d'
-        //         }
-        //     }
-        // }
+        stage('Build code with Docker Compose') {
+            steps {
+                script {
+                    sh 'docker-compose up --build -d'
+                }
+            }
+        }
 
     //     stage('Security Check with Trivy') {
     //         steps {
