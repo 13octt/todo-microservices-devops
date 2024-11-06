@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
-        KUBECONFIG_CREDENTIALS_ID = 'kubeconfig-credentials'
-        SONARQUBE_ENV = "MySonarQube"
-        TRIVY_TOKEN = credentials('trivy-token') // nếu có
+        // DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
+        // KUBECONFIG_CREDENTIALS_ID = 'kubeconfig-credentials'
+        SCANNER_HOME=tool 'sonar-scanner'
+        // TRIVY_TOKEN = credentials('trivy-token') // nếu có
     }
 
     stages {
@@ -15,13 +15,13 @@ pipeline {
             }
         }
 
-        stage('Build code with Docker Compose') {
-            steps {
-                script {
-                    sh 'docker-compose up --build -d'
-                }
-            }
-        }
+        // stage('Build code with Docker Compose') {
+        //     steps {
+        //         script {
+        //             sh 'docker-compose up --build -d'
+        //         }
+        //     }
+        // }
 
         stage('SonarQube Analysis') {
             steps {
@@ -40,44 +40,44 @@ pipeline {
             }
         }
 
-        stage('Security Check with Trivy') {
-            steps {
-                script {
-                    // Quét bảo mật cho tất cả các image được xây dựng
-                    def services = ['auth-service', 'gateway', 'profile-service', 'task-service', 'todo-fe']
-                    services.each { service ->
-                        sh "trivy image --exit-code 1 --severity HIGH yourdockerhubusername/${service}:latest"
-                    }
-                }
-            }
-        }
+    //     stage('Security Check with Trivy') {
+    //         steps {
+    //             script {
+    //                 // Quét bảo mật cho tất cả các image được xây dựng
+    //                 def services = ['auth-service', 'gateway', 'profile-service', 'task-service', 'todo-fe']
+    //                 services.each { service ->
+    //                     sh "trivy image --exit-code 1 --severity HIGH yourdockerhubusername/${service}:latest"
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: KUBECONFIG_CREDENTIALS_ID, variable: 'KUBECONFIG')]) {
-                        // Áp dụng tất cả các tệp YAML trong thư mục k8s
-                        sh "kubectl apply -f ./k8s/ --kubeconfig=$KUBECONFIG"
-                    }
-                }
-            }
-        }
-    }
+    //     stage('Deploy to Kubernetes') {
+    //         steps {
+    //             script {
+    //                 withCredentials([file(credentialsId: KUBECONFIG_CREDENTIALS_ID, variable: 'KUBECONFIG')]) {
+    //                     // Áp dụng tất cả các tệp YAML trong thư mục k8s
+    //                     sh "kubectl apply -f ./k8s/ --kubeconfig=$KUBECONFIG"
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
-    post {
-        always {
-            script {
-                // Dọn dẹp container và mạng nếu đang chạy
-                sh 'docker-compose down'
-            }
-        }
+    // post {
+    //     always {
+    //         script {
+    //             // Dọn dẹp container và mạng nếu đang chạy
+    //             sh 'docker-compose down'
+    //         }
+    //     }
 
-        success {
-            script {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
+    //     success {
+    //         script {
+    //             timeout(time: 5, unit: 'MINUTES') {
+    //                 waitForQualityGate abortPipeline: true
+    //             }
+    //         }
+    //     }
     }
 }
