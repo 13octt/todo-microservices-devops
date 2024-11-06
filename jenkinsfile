@@ -11,11 +11,11 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-repo/todo-app.git'
+                git branch: 'main', url: 'https://github.com/13octt/todo-microservices-devops.git'
             }
         }
 
-        stage('Build and Start Services') {
+        stage('Build code with Docker Compose') {
             steps {
                 script {
                     // Xây dựng và khởi động tất cả các dịch vụ bằng Docker Compose
