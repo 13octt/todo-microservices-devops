@@ -1,11 +1,15 @@
 pipeline {
     agent any
 
-    environment {
-        SCANNER_HOME=tool 'sonar-scanner'
+    tools {
         dockerTool 'docker'
         go 'golang'
         nodejs 'node18'
+    }
+
+    environment {
+        SCANNER_HOME=tool 'sonar-scanner'
+
 
         // DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
         // KUBECONFIG_CREDENTIALS_ID = 'kubeconfig-credentials'
